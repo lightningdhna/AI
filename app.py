@@ -4,7 +4,7 @@ import cv2
 import imghdr
 import keras
 from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout
+from keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Dropout, Convolution2D, ZeroPadding2D
 from matplotlib import pyplot as plt
 from keras.metrics import Precision, Recall, BinaryAccuracy
 import numpy as np
@@ -36,7 +36,7 @@ def clean_source():
 def create_data_set():
     batch_size = 64
     image_size = (256, 256)
-    shuffle = False
+    shuffle = True
 
     data = tf.keras.utils.image_dataset_from_directory('data', batch_size=batch_size, image_size=image_size,
                                                        shuffle=shuffle, crop_to_aspect_ratio=False)
@@ -45,7 +45,7 @@ def create_data_set():
     data_size = len(data)
     train_size = int(data_size * 0.7)
     val_size = int(data_size * 0.2)
-    test_size = int(data_size * 0.1)
+    test_size = data_size - train_size - val_size
 
     train_data = data.take(train_size)
     val_data = data.skip(train_size).take(val_size)
@@ -55,34 +55,49 @@ def create_data_set():
 
 def load_saved_model(model_name):
     try:
-        model = load_model(os.path.join('models', model_name))
+        model = load_model(os.path.join('models', model_name + '.h5'))
         return model
     except Exception as e:
         pass
 
 
-def create_model():
+def create_model(model_name):
     model = Sequential()
 
-    model.add(Conv2D(16, (3, 3), 1, activation='relu', input_shape=(256, 256, 3)))
+    model.add(Conv2D(16, (3, 3), activation='relu', padding='same', input_shape=(256, 256, 3)))
     model.add(MaxPooling2D())
 
-    model.add(Conv2D(32, (3, 3), 1, activation='relu'))
+    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
     model.add(MaxPooling2D())
 
-    model.add(Conv2D(32, (3, 3), 1, activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
     model.add(MaxPooling2D())
 
     model.add(Flatten())
 
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(1, activation='softmax'))
 
-    model.compile('adam', loss=tf.losses.BinaryCrossentropy(), metrics=['accuracy'])
+    model.compile(optimizer='SGD', loss=tf.losses.BinaryCrossentropy(), metrics=['accuracy'])
     model.summary()
 
-    model.save(os.path.join('models', 'model2.h5'))
+    model.save(os.path.join('models', model_name + '.h5'))
     return model
+
+
+def load_and_train_model(model_name):
+    try:
+        model = load_model(os.path.join('models', model_name + '.h5'))
+        train_data, val_data, test_data = create_data_set()
+        train_model(model, train_data, val_data)
+    except Exception as e:
+        print(e)
 
 
 def train_model(model, train_data, val_data):
@@ -126,22 +141,28 @@ def test_predict(model, img_path):
     resize = tf.image.resize(image, (256, 256))
     plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     plt.show()
-    yhat = model.predict(np.expand_dims(resize / 255, 0))
+    yhat = model.predict(np.expand_dims(resize / 255.0, 0))
+    # yhat = model.predict(np.expand_dims(resize, 0))
     print(yhat)
 
+def show_image(img_path):
+    image = cv2.imread(img_path)
+    plt.imshow(cv2.cvtColor(image,cv2.COLOR_BGR2RGB))
+    plt.show()
 
 def main():
     model_name = 'model2.h5'
     train_data, val_data, test_data = create_data_set()
     if not load_saved_model(model_name):
-        model = create_model()
+        model = create_model(model_name)
         train_model(model, train_data, val_data)
     else:
         model = load_saved_model(model_name)
 
-    test_predict(model,'img.png')
+    test_predict(model, 'img.png')
 
 
 if __name__ == "__main__":
     # clean_source()
-    main()
+    # main()
+    pass
