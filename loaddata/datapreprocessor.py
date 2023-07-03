@@ -1,17 +1,15 @@
+import imghdr
+import math
+import os
 import pathlib
 
-import numpy as np
+import tensorflow as tf
 from cv2 import cv2
 from matplotlib import pyplot as plt
-import os
-import imghdr
-import numpy
-import time
-import tensorflow as tf
-import math
-from PIL import Image
 
 AUTOTUNE = tf.data.AUTOTUNE
+from keras.layers import *
+global RandomBrightness, RandomFlip, RandomRotation, RandomContrast
 
 
 class DataLoader:
@@ -46,7 +44,7 @@ class DataLoader:
                     print('Issue with Image: {}'.format(image_path))
                     print(e)
 
-    def create_data_set(self, input_shape = (64,64,3)):
+    def create_data_set(self, input_shape=(64, 64, 3), apply_augmentation=True, aug_rate=3):
         val_rate = 0.2
         # img_height = input_shape[0]
         # img_width = input_shape[1]
@@ -59,17 +57,31 @@ class DataLoader:
                                                            image_size=image_size,
                                                            shuffle=shuffle, crop_to_aspect_ratio=False,
                                                            label_mode="int")
-
         labels = []
         images = []
+        data_augmentor = tf.keras.Sequential([
+            RandomFlip("horizontal_and_vertical"),
+            RandomRotation(0.5),
+            RandomBrightness(0.3),
+            RandomContrast(0.3),
+        ])
         for image, label in data:
-            labels.append(label.numpy())
-            images.append(image.numpy())
+            label = label.numpy()
+            image = image.numpy()
 
+            labels.append(label)
+            images.append(image)
+            if apply_augmentation:
+                for i in range(aug_rate):
+                    images.append(data_augmentor(image))
+                    labels.append(label)
+                    pass
+                pass
+
+        if apply_augmentation:
+            print(f"số lượng ảnh training sau áp dụng augmentation: {len(labels)}")
         # labels = np.concatenate([y.numpy() for x, y in data])
         # images = np.concatenate([x.numpy() for x, y in data])
-
-
 
         # fig, ax = plt.subplots(ncols=6, nrows=6, figsize=(10, 10))
         # for i in range(0,6):
@@ -80,18 +92,17 @@ class DataLoader:
         #         ax[i][j].imshow(image)
         #         ax[i][j].title.set_text(label)
         #
-        # fig.tight_layout(pad=3)
+        # fig.tight_layout(pad=001000)
         # plt.show()
         # plt.show()
 
-        from loaddata.labelfeaturemapping import get_feature_by_num
-        attributes = [get_feature_by_num(label) for label in labels]
+        from loaddata.labelfeaturemapping import get_att_by_num
+        attributes = [get_att_by_num(label) for label in labels]
 
         data_path = pathlib.Path(self.data_dir)
         image_count = len(list(data_path.glob('*/*')))
 
         list_ds = tf.data.Dataset.from_tensor_slices((images, attributes))
-
 
         normalization_layer = tf.keras.layers.Rescaling(1. / 255)
         list_ds = list_ds.map(lambda x, y: (normalization_layer(x), y))

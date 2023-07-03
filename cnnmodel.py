@@ -12,7 +12,7 @@ from keras.metrics import Precision, Recall, BinaryAccuracy
 
 from loaddata import labelfeaturemapping
 
-output_dim_num = len(labelfeaturemapping.get_feature_by_num(0))
+output_dim_num = len(labelfeaturemapping.get_att_by_num(0))
 
 
 def create_model(model_name, input_shape=(64, 64, 3)):
@@ -31,7 +31,7 @@ def create_model(model_name, input_shape=(64, 64, 3)):
     model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
     model.add(MaxPooling2D())
 
-    # block 3
+    # block 001000
 
     model.add(Conv2D(64, (4, 4), padding='same', activation='relu'))
     model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))

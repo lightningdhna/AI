@@ -2,17 +2,19 @@ import math
 import os
 
 import keras.models
-from cv2 import cv2
+import cv2.cv2
 
 import cnnmodel
 import handgestureregconition
 import loaddata.datapreprocessor
 from matplotlib import pyplot as plt
 
+from loaddata import labelfeaturemapping
+
 
 def create_trained_model(epoch=20, input_shape=(64, 64, 3)):
     model = cnnmodel.create_model('model1.h5')
-    train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set(input_shape=input_shape)
+    train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set(input_shape=input_shape, apply_augmentation=True)
     for i in range(epoch):
         cnnmodel.train_model(model, train_ds, val_ds, epochs=1)
 
@@ -49,15 +51,16 @@ def continue_training(epoch=20, input_shape=(64, 64, 3)):
         cnnmodel.continue_training_model('model1.h5', train_ds, val_ds, epoch=1)
 
 
+from keras.layers import *
+
 if __name__ == "__main__":
-    # create_img_data('one',500)
-
-    # create_trained_model(epoch=100)
-    # model = cnnmodel.load_model('model1.h5')
-    # cnnmodel.predict(model,os.path.join('data/one','2.jpeg'))
-    # continue_training(200)
-
+    # create_img_data('0000100000',300)
+    continue_training(200)
     # test()
+
+    # model = cnnmodel.load_model('model1.h5')
+    # cnnmodel.predict(model,os.path.join('data/0100000000','0100000000.jpeg'))
+
     # check_data()
 
     pass

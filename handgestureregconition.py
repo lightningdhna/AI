@@ -6,8 +6,10 @@ import numpy
 from cv2 import cv2
 
 import cnnmodel
+from loaddata import labelfeaturemapping
 
 cam = cv2.VideoCapture(0)
+
 
 # model = None
 # model = cnnmodel.load_model('model1.h5')
@@ -18,7 +20,9 @@ def yhat_tostring(yhat):
 
 
 def set_prediction(window_name, yhat):
-    cv2.setWindowTitle(window_name, yhat_tostring(yhat))
+    label_predict = labelfeaturemapping.get_label_from_att(numpy.squeeze(yhat))
+    # label_predict =str(yhat)
+    cv2.setWindowTitle(window_name, label_predict)
     pass
 
 
@@ -39,8 +43,12 @@ def run():
     cv2.destroyAllWindows()
 
 
+def use_augmentation():
+    pass
+
+
 def recorde_hand_gesture(label_name, data_dir, img_num):
-    frame_step = 2
+    frame_step = 4
     img_folder_path = os.path.join(data_dir, label_name)
     if not os.path.isdir(img_folder_path):
         os.mkdir(img_folder_path)

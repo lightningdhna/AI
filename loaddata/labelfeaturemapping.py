@@ -1,14 +1,28 @@
-feature_map_str = {
-    'cat': [1, 0],
-    'dog': [0, 1]
-}
+import os
 
-feature_map_int = [
-    [1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    # [0, 1, 0, 0, 0],
-]
+label = os.listdir('data')
 
 
-def get_feature_by_num(num):
-    return feature_map_int[int(num)]
+def get_att_by_num(num):
+    s = label[int(num)]
+    s.split(sep=' ')
+    return [float(a) for a in s]
+
+
+def get_name_by_att(att):
+    s = []
+    return ""
+
+
+def get_label_from_att(att_hat):
+    att = []
+    for i in att_hat:
+        if i < 0.3:
+            att.append(0)
+        elif i > 0.7:
+            att.append(1)
+        else:
+            return "Can't regconize"
+    if att[-1] == 1:
+        return "Nothing"
+    return str(att[0:5])
