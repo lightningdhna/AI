@@ -18,6 +18,8 @@ class DataLoader:
     image_extensions = ['jpeg', 'jpg', 'bmp', 'png']
 
     def __init__(self):
+        self.input_shape = None
+        self.batch_size = None
         self.data_dir = None
         self.source_dir = "/"
         self.labels = []
@@ -44,65 +46,52 @@ class DataLoader:
                     print('Issue with Image: {}'.format(image_path))
                     print(e)
 
-    # def create_data_set():
-    #     batch_size = 32
-    #     image_size = (256, 256)
-    #     shuffle = True
-    #
-    # data = tf.keras.utils.image_dataset_from_directory('data', batch_size=batch_size, image_size=image_size,
-    # shuffle=shuffle, crop_to_aspect_ratio=False, label_mode="int")
-    #
-    #     labels = np.concatenate([y for x, y in data])
-    #     images = np.concatenate([x for x, y in data])
-    #
-    #     # labels = tf.constant(labels)
-    #     # images = tf.constant(images)
-    #
-    #     dataset = tf.data.Dataset.from_tensor_slices((images,labels))
-    #
-    #     cnt= 0
-    #     for x, y in dataset:
-    #         cnt+=1
-    #     print(cnt)
-    #
-    #
-    #     data = data.map(lambda x,y: (x / 255.0,y ))
-    #
-    #     data_size = len(data)
-    #     train_size = int(data_size * 0.7)
-    #     val_size = int(data_size * 0.2)
-    #     test_size = data_size - train_size - val_size
-    #
-    #     train_data = data.take(train_size)
-    #     val_data = data.skip(train_size).take(val_size)
-    #     test_data = data.skip(train_size + val_size).take(test_size)
-    #
-    #     return train_data, val_data, test_data
-
-    def create_data_set(self):
+    def create_data_set(self, input_shape = (64,64,3)):
         val_rate = 0.2
-        img_height = 256
-        img_width = 256
-        batch_size = 64
-        image_size = (256, 256)
+        # img_height = input_shape[0]
+        # img_width = input_shape[1]
+        self.batch_size = 32
+        image_size = (input_shape[0], input_shape[1])
         shuffle = True
+        self.input_shape = input_shape
 
-        data = tf.keras.utils.image_dataset_from_directory('data', batch_size=batch_size,
+        data = tf.keras.utils.image_dataset_from_directory('data', batch_size=None,
                                                            image_size=image_size,
                                                            shuffle=shuffle, crop_to_aspect_ratio=False,
                                                            label_mode="int")
 
-        labels = np.concatenate([y for x, y in data])
-        images = np.concatenate([x for x, y in data])
+        labels = []
+        images = []
+        for image, label in data:
+            labels.append(label.numpy())
+            images.append(image.numpy())
+
+        # labels = np.concatenate([y.numpy() for x, y in data])
+        # images = np.concatenate([x.numpy() for x, y in data])
+
+
+
+        # fig, ax = plt.subplots(ncols=6, nrows=6, figsize=(10, 10))
+        # for i in range(0,6):
+        #     for j in range(0,6):
+        #         idx = int(i*6+j)
+        #         image = images[idx] /255
+        #         label = labels[idx]
+        #         ax[i][j].imshow(image)
+        #         ax[i][j].title.set_text(label)
+        #
+        # fig.tight_layout(pad=3)
+        # plt.show()
+        # plt.show()
+
         from loaddata.labelfeaturemapping import get_feature_by_num
-        attribute = [get_feature_by_num(label) for label in labels]
+        attributes = [get_feature_by_num(label) for label in labels]
 
         data_path = pathlib.Path(self.data_dir)
         image_count = len(list(data_path.glob('*/*')))
 
-        list_ds = tf.data.Dataset.from_tensor_slices((images, attribute))
-        list_ds = list_ds.shuffle(image_count, reshuffle_each_iteration=False)
-        # list_ds = tf.data.Dataset.list_files(str(data_path / '*/*'), shuffle=False)
+        list_ds = tf.data.Dataset.from_tensor_slices((images, attributes))
+
 
         normalization_layer = tf.keras.layers.Rescaling(1. / 255)
         list_ds = list_ds.map(lambda x, y: (normalization_layer(x), y))
@@ -114,7 +103,7 @@ class DataLoader:
         def configure_for_performance(ds):
             ds = ds.cache()
             ds = ds.shuffle(buffer_size=1000)
-            ds = ds.batch(batch_size)
+            ds = ds.batch(self.batch_size)
             ds = ds.prefetch(buffer_size=AUTOTUNE)
             return ds
 
@@ -122,11 +111,7 @@ class DataLoader:
         val_ds = configure_for_performance(val_ds)
 
         for image, label in train_ds:
-            print(image[0])
             print(label[0])
-
-        batch = next(iter(train_ds))
-        print(batch[1].shape)
 
         return train_ds, val_ds
 
@@ -145,10 +130,14 @@ class DataLoader:
     def show_batch(self, batch):
         self.show_images(batch[0], batch[1])
 
+    def set_batch_size(self, batch_size):
+        self.batch_size = batch_size
+
 
 loader = DataLoader()
 
 
-def load_data_from_foler(_data_dir):
+def load_data_from_folder(_data_dir, batch_size=32):
+    loader.set_batch_size(batch_size)
     loader.assign_path(_data_dir)
     return loader
