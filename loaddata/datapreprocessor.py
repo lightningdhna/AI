@@ -44,7 +44,7 @@ class DataLoader:
                     print('Issue with Image: {}'.format(image_path))
                     print(e)
 
-    def create_data_set(self, input_shape=(64, 64, 3), apply_augmentation=True, aug_rate=3):
+    def create_data_set(self, input_shape=(64, 64, 3), apply_augmentation=False, aug_rate=3):
         val_rate = 0.2
         # img_height = input_shape[0]
         # img_width = input_shape[1]

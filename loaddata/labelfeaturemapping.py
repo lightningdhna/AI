@@ -17,12 +17,15 @@ def get_name_by_att(att):
 def get_label_from_att(att_hat):
     att = []
     for i in att_hat:
-        if i < 0.3:
-            att.append(0)
-        elif i > 0.7:
-            att.append(1)
-        else:
-            return "Can't regconize"
-    if att[-1] == 1:
-        return "Nothing"
+        att.append("{:1.1f}".format(i))
     return str(att[0:5])
+    # for i in att_hat:
+    #     if i < 0.3:
+    #         att.append(0)
+    #     elif i > 0.7:
+    #         att.append(1)
+    #     else:
+    #         return "Can't regconize"
+    # if att[-1] == 1:
+    #     return "Nothing"
+    # return str(att[0:5])

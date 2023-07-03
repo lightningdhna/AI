@@ -18,38 +18,60 @@ output_dim_num = len(labelfeaturemapping.get_att_by_num(0))
 def create_model(model_name, input_shape=(64, 64, 3)):
     model = Sequential()
 
-    # block1
-    model.add(Conv2D(32, (4, 4), activation='relu', padding='same',input_shape=input_shape))
+    # block 1
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same',input_shape=input_shape))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
     model.add(Conv2D(32, (3, 3), activation='relu', padding='same'))
     model.add(MaxPooling2D())
 
-    # block2
+    # block 2
 
-    model.add(Conv2D(32, (4, 4), padding='same', activation='relu'))
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(32, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+
     model.add(MaxPooling2D())
 
-    # block 001000
+    # block 3
 
-    model.add(Conv2D(64, (4, 4), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
-    model.add(Conv2D(64, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+
+    model.add(MaxPooling2D())
+
+    # block 4
+
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+    model.add(Conv2D(128, (3, 3), padding='same', activation='relu'))
+
     model.add(MaxPooling2D())
 
     # FCL
     model.add(Flatten())
-
-    # model.add(Dropout(0.4))
-    model.add(Dense(256, activation='relu'))
-    # model.add(Dropout(0.4))
-    # model.add(Dense(256, activation='relu'))
-    # model.add(Dropout(0.4))
-    model.add(Dense(256, activation=tf.nn.relu))
-    model.add(Dense(256, activation=tf.nn.tanh))
-    # model.add(Dropout(0.4))
+    model.add(Dropout(0.5))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(512, activation=tf.nn.tanh))
+    model.add(Dropout(0.5))
+    model.add(Dense(512, activation=tf.nn.tanh))
     model.add(Dense(output_dim_num, activation=tf.nn.tanh))
 
     model.compile(optimizer='adam', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])

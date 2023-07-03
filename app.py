@@ -16,6 +16,7 @@ def create_trained_model(epoch=20, input_shape=(64, 64, 3)):
     model = cnnmodel.create_model('model1.h5')
     train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set(input_shape=input_shape, apply_augmentation=True)
     for i in range(epoch):
+        print(f"epoch{i}")
         cnnmodel.train_model(model, train_ds, val_ds, epochs=1)
 
 
@@ -54,8 +55,9 @@ def continue_training(epoch=20, input_shape=(64, 64, 3)):
 from keras.layers import *
 
 if __name__ == "__main__":
-    # create_img_data('0000100000',300)
-    continue_training(200)
+    create_trained_model(100)
+    # create_img_data('0000000000',300)
+    # continue_training(200)
     # test()
 
     # model = cnnmodel.load_model('model1.h5')
