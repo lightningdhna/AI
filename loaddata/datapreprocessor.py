@@ -7,6 +7,8 @@ import tensorflow as tf
 from cv2 import cv2
 from matplotlib import pyplot as plt
 
+from loaddata import labelfeaturemapping
+
 AUTOTUNE = tf.data.AUTOTUNE
 from keras.layers import *
 global RandomBrightness, RandomFlip, RandomRotation, RandomContrast
@@ -44,7 +46,7 @@ class DataLoader:
                     print('Issue with Image: {}'.format(image_path))
                     print(e)
 
-    def create_data_set(self, input_shape=(64, 64, 3), apply_augmentation=False, aug_rate=3):
+    def create_data_set(self, input_shape=(64, 64, 3), apply_augmentation=False, aug_rate=1):
         val_rate = 0.2
         # img_height = input_shape[0]
         # img_width = input_shape[1]
@@ -57,13 +59,13 @@ class DataLoader:
                                                            image_size=image_size,
                                                            shuffle=shuffle, crop_to_aspect_ratio=False,
                                                            label_mode="int")
+        print("finish loading 1")
         labels = []
         images = []
         data_augmentor = tf.keras.Sequential([
             RandomFlip("horizontal_and_vertical"),
-            RandomRotation(0.5),
-            RandomBrightness(0.3),
-            RandomContrast(0.3),
+            # RandomBrightness(0.3),
+            # RandomContrast(0.3),
         ])
         for image, label in data:
             label = label.numpy()
@@ -80,21 +82,8 @@ class DataLoader:
 
         if apply_augmentation:
             print(f"số lượng ảnh training sau áp dụng augmentation: {len(labels)}")
-        # labels = np.concatenate([y.numpy() for x, y in data])
-        # images = np.concatenate([x.numpy() for x, y in data])
 
-        # fig, ax = plt.subplots(ncols=6, nrows=6, figsize=(10, 10))
-        # for i in range(0,6):
-        #     for j in range(0,6):
-        #         idx = int(i*6+j)
-        #         image = images[idx] /255
-        #         label = labels[idx]
-        #         ax[i][j].imshow(image)
-        #         ax[i][j].title.set_text(label)
-        #
-        # fig.tight_layout(pad=001000)
-        # plt.show()
-        # plt.show()
+        print("finish loading 2")
 
         from loaddata.labelfeaturemapping import get_att_by_num
         attributes = [get_att_by_num(label) for label in labels]
@@ -103,6 +92,7 @@ class DataLoader:
         image_count = len(list(data_path.glob('*/*')))
 
         list_ds = tf.data.Dataset.from_tensor_slices((images, attributes))
+        print("finish loading")
 
         normalization_layer = tf.keras.layers.Rescaling(1. / 255)
         list_ds = list_ds.map(lambda x, y: (normalization_layer(x), y))
@@ -121,8 +111,77 @@ class DataLoader:
         train_ds = configure_for_performance(train_ds)
         val_ds = configure_for_performance(val_ds)
 
-        for image, label in train_ds:
-            print(label[0])
+        # for image, label in train_ds:
+        #     print(label[0])
+
+        return train_ds, val_ds
+    def create_data_set_finger(self,finger, input_shape=(64, 64, 3), apply_augmentation=False, aug_rate=1):
+        val_rate = 0.1
+        # img_height = input_shape[0]
+        # img_width = input_shape[1]
+        self.batch_size = 32
+        image_size = (input_shape[0], input_shape[1])
+        shuffle = True
+        self.input_shape = input_shape
+
+        data = tf.keras.utils.image_dataset_from_directory('data', batch_size=None,
+                                                           image_size=image_size,
+                                                           shuffle=shuffle, crop_to_aspect_ratio=False,
+                                                           label_mode="int")
+        print("finish loading 1")
+        labels = []
+        images = []
+        data_augmentor = tf.keras.Sequential([
+            RandomFlip("horizontal_and_vertical"),
+            # RandomBrightness(0.3),
+            # RandomContrast(0.3),
+        ])
+        for image, label in data:
+            label = label.numpy()
+            image = image.numpy()
+
+            labels.append(label)
+            images.append(image)
+            if apply_augmentation:
+                for i in range(aug_rate):
+                    images.append(data_augmentor(image))
+                    labels.append(label)
+                    pass
+                pass
+
+        if apply_augmentation:
+            print(f"số lượng ảnh training sau áp dụng augmentation: {len(labels)}")
+
+        print("finish loading 2")
+
+        from loaddata.labelfeaturemapping import get_att_by_num
+        attributes = [labelfeaturemapping.get_finger_att(label,finger) for label in labels]
+
+        data_path = pathlib.Path(self.data_dir)
+        image_count = len(list(data_path.glob('*/*')))
+
+        list_ds = tf.data.Dataset.from_tensor_slices((images, attributes))
+        print("finish loading")
+
+        normalization_layer = tf.keras.layers.Rescaling(1. / 255)
+        list_ds = list_ds.map(lambda x, y: (normalization_layer(x), y))
+
+        val_size = int(image_count * val_rate)
+        train_ds = list_ds.skip(val_size)
+        val_ds = list_ds.take(val_size)
+
+        def configure_for_performance(ds):
+            ds = ds.cache()
+            ds = ds.shuffle(buffer_size=1000)
+            ds = ds.batch(self.batch_size)
+            ds = ds.prefetch(buffer_size=AUTOTUNE)
+            return ds
+
+        train_ds = configure_for_performance(train_ds)
+        val_ds = configure_for_performance(val_ds)
+
+        # for image, label in train_ds:
+        #     print(label[0])
 
         return train_ds, val_ds
 

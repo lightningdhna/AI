@@ -22,17 +22,19 @@ def yhat_tostring(yhat):
 def set_prediction(window_name, yhat):
     label_predict = labelfeaturemapping.get_label_from_att(numpy.squeeze(yhat))
     # label_predict =str(yhat)
-    cv2.setWindowTitle(window_name, label_predict)
+    cv2.setWindowTitle(window_name, str(yhat))
     pass
 
+from matplotlib import pyplot as plt
+def run(model_name):
+    model = cnnmodel.load_model(model_name)
 
-def run():
-    model = cnnmodel.load_model('model1.h5')
     while True:
         retval, frame = cam.read()
         if not retval: break
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         yhat = cnnmodel.predict_image(model, frame_rgb)
+
         window_name = 'test'
         cv2.imshow(window_name, frame)
         set_prediction(window_name, yhat)
@@ -48,7 +50,7 @@ def use_augmentation():
 
 
 def recorde_hand_gesture(label_name, data_dir, img_num):
-    frame_step = 4
+    frame_step = 10
     img_folder_path = os.path.join(data_dir, label_name)
     if not os.path.isdir(img_folder_path):
         os.mkdir(img_folder_path)
