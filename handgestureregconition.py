@@ -25,7 +25,10 @@ def set_prediction(window_name, yhat):
     cv2.setWindowTitle(window_name, str(yhat))
     pass
 
+
 from matplotlib import pyplot as plt
+
+
 def run(model_name):
     model = cnnmodel.load_model(model_name)
 
@@ -50,7 +53,7 @@ def use_augmentation():
 
 
 def recorde_hand_gesture(label_name, data_dir, img_num):
-    frame_step = 10
+    frame_step = 2
     img_folder_path = os.path.join(data_dir, label_name)
     if not os.path.isdir(img_folder_path):
         os.mkdir(img_folder_path)
@@ -88,3 +91,30 @@ def recorde_hand_gesture(label_name, data_dir, img_num):
 
     cam.release()
     cv2.destroyAllWindows()
+
+
+def run():
+    models = [cnnmodel.load_classifier(finger) for finger in range(0, 5)]
+    window_name = 'test'
+    while True:
+        retval, frame = cam.read()
+        if not retval: break
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        yhats = [cnnmodel.predict_image(model, frame_rgb) for model in models]
+        cv2.imshow(window_name, frame)
+
+        output = []
+        for yhat in yhats:
+            output.append("{:1.1".format(yhat))
+            pass
+        cv2.setWindowTitle(window_name, str(output))
+
+        if cv2.waitKey(1) == ord('q'):
+            break
+
+    cam.release()
+    cv2.destroyAllWindows()
+
+
+def use_augmentation():
+    pass
