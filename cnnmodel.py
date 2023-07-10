@@ -56,7 +56,7 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
 
 
 def load_classifier(finger):
-    model_name = finger + '.h5'
+    model_name = str(finger) + '.h5'
     print(f"loading{model_name}")
     return load_model(model_name)
 

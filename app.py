@@ -5,6 +5,7 @@ import threading
 import keras.models
 import cv2.cv2
 import numpy
+import numpy as np
 
 import cnnmodel
 import handgestureregconition
@@ -100,15 +101,18 @@ def test_model():
         model = cnnmodel.load_classifier(finger)
         for label in os.listdir('test'):
             s = label.split(sep=' ')
-            y = float(s[finger])
+            y = float(label[finger])
             for img in os.listdir(os.path.join('test', label)):
                 img_count += 1
-                yhat = cnnmodel.predict(model, img)
+                yhat = cnnmodel.predict_image(model, cv2.cvtColor(cv2.imread(os.path.join('test',label,img)),cv2.COLOR_BGR2RGB))
                 if (yhat - 0.5) * (y - 0.5) > 0:
                     right_ans += 1
 
         acc.append(right_ans / img_count)
+    print(acc)
 
+def run_model():
+    handgestureregconition.run_2()
 
 def test_model2():
     n = 16
@@ -119,14 +123,17 @@ def test_model2():
     for ix, img in enumerate(os.listdir('test2')):
         i = int(ix / ncol)
         j = int(ix % ncol)
+        img = cv2.imread(os.path.join('test2',img))
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
         ax[i][j].imshow(img)
-        yhats = [cnnmodel.predict_image(model, img) for model in models]
+        yhats = [np.squeeze(cnnmodel.predict_image(model, img)) for model in models]
+        # print(str(yhats))
         output = []
         for yhat in yhats:
-            output.append("{:1.1".format(yhat))
+            output.append("{:1.1}".format(yhat))
             pass
         ax[i][j].title.set_text(str(output))
-    fig.tight_layout(pad=3)
+    fig.tight_layout(pad=5)
     plt.show()
     pass
 
@@ -135,8 +142,8 @@ if __name__ == "__main__":
     # threads = [None]*6
     # create_classifier_finger(0,30)
     # continue_training_classifier(0,20)
-    for i in range(0, 5):
-        create_classifier_finger(i, 20)
+    # for i in range(0, 5):
+    #     continue_training_classifier(i, 20)
     # continue_training_classifier(0,100)
     # create_img_data('10111',1,data_dir='test2')
     # test('0.h5')
@@ -145,5 +152,7 @@ if __name__ == "__main__":
     # cnnmodel.predict(model,os.path.join('data/01110','100.jpeg'))
 
     # check_data(2)
-
+    # test_model2()
+    # test_model()
+    run_model()
     pass

@@ -93,19 +93,21 @@ def recorde_hand_gesture(label_name, data_dir, img_num):
     cv2.destroyAllWindows()
 
 
-def run():
+def run_2():
     models = [cnnmodel.load_classifier(finger) for finger in range(0, 5)]
     window_name = 'test'
+
     while True:
         retval, frame = cam.read()
         if not retval: break
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        yhats = [cnnmodel.predict_image(model, frame_rgb) for model in models]
+
+        yhats = [numpy.squeeze(cnnmodel.predict_image(model, frame_rgb)) for model in models]
         cv2.imshow(window_name, frame)
 
         output = []
         for yhat in yhats:
-            output.append("{:1.1".format(yhat))
+            output.append("{:1.1}".format(yhat))
             pass
         cv2.setWindowTitle(window_name, str(output))
 
