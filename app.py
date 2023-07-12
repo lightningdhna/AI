@@ -8,6 +8,7 @@ import numpy
 import numpy as np
 
 import cnnmodel
+import cnnmodel2
 import handgestureregconition
 import loaddata.datapreprocessor
 from matplotlib import pyplot as plt
@@ -18,7 +19,7 @@ from loaddata import labelfeaturemapping
 def create_trained_model(epoch=20, input_shape=(64, 64, 3)):
     model = cnnmodel.create_model('model1.h5')
     train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set(input_shape=input_shape,
-                                                                                               apply_augmentation=False)
+                                                                                                apply_augmentation=False)
     for i in range(epoch):
         print(f"epoch{i}")
         cnnmodel.train_model(model, train_ds, val_ds, epochs=1)
@@ -58,9 +59,10 @@ def continue_training(epoch=20, input_shape=(64, 64, 3)):
 
 
 def create_classifier_finger(finger, epoch, input_shape=(64, 64, 3)):
-    model = cnnmodel.create_classifier(finger)
+    # model = cnnmodel.create_classifier(finger)
+    model = cnnmodel2.create_resnet_classifier(finger,input_shape)
     train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set_finger(finger,
-                                                                                                      input_shape=input_shape)
+                                                                                                       input_shape=input_shape)
     batch = next(iter(train_ds))
     labels = batch[1]
     images = batch[0]
@@ -83,7 +85,7 @@ def create_classifier_finger(finger, epoch, input_shape=(64, 64, 3)):
 
 def continue_training_classifier(finger, epoch, input_shape=(64, 64, 3)):
     train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set_finger(finger,
-                                                                                                      input_shape=input_shape)
+                                                                                                       input_shape=input_shape)
     for i in range(epoch):
         print(f"epoch{i}")
         cnnmodel.continue_training_classifier(finger, train_ds, val_ds, epoch=1)
@@ -142,17 +144,17 @@ if __name__ == "__main__":
     # threads = [None]*6
     # create_classifier_finger(0,30)
     # continue_training_classifier(0,20)
-    # for i in range(0, 5):
-    #     continue_training_classifier(i, 20)
+    for i in range(0, 5):
+        create_classifier_finger(i, 20)
     # continue_training_classifier(0,100)
-    # create_img_data('10111',1,data_dir='test2')
-    # test('0.h5')
+    # create_img_data('11111', 300, data_dir='data')
+    # test('2.h5')
 
     # model = cnnmodel.load_model('2.h5')
-    # cnnmodel.predict(model,os.path.join('data/01110','100.jpeg'))
+    # cnnmodel.predict(model,os.path.join('data1/01110','100.jpeg'))
 
     # check_data(2)
     # test_model2()
     # test_model()
-    run_model()
+    # run_model()
     pass

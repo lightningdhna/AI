@@ -31,11 +31,13 @@ from matplotlib import pyplot as plt
 
 def run(model_name):
     model = cnnmodel.load_model(model_name)
-
+    start_point = (150,150)
+    end_point = (450,450)
     while True:
         retval, frame = cam.read()
         if not retval: break
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        cv2.rectangle(frame, pt1=start_point, pt2=end_point, color=(180, 180, 20), thickness=2)
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)[150:450,150:450]
         yhat = cnnmodel.predict_image(model, frame_rgb)
 
         window_name = 'test'
@@ -59,16 +61,18 @@ def recorde_hand_gesture(label_name, data_dir, img_num):
         os.mkdir(img_folder_path)
     os.chdir(img_folder_path)
     frame_counter = int(0)
-
     # data_path = pathlib.Path(img_folder_path)
     # image_counter = int(len(list(data_path.glob('*'))))
     image_counter = int(len(os.listdir()))
 
     start_recording = False
     change_title = False
+    start_point = (150,150)
+    end_point = (450,450)
     cv2.setWindowTitle('window', 'Preparing')
     while img_num > 0:
         retval, frame = cam.read()
+        cv2.rectangle(frame, pt1=start_point, pt2=end_point, color=(180, 180, 20), thickness=2)
         cv2.imshow('window', frame)
         key = cv2.waitKey(1)
         if key == ord('q'):
@@ -86,7 +90,7 @@ def recorde_hand_gesture(label_name, data_dir, img_num):
             image_counter += 1
             img_num -= 1
             print(f'saving image {image_counter}.jpeg')
-            cv2.imwrite(str(image_counter) + '.jpeg', frame)
+            cv2.imwrite(str(image_counter) + '.jpeg', frame[150:450,150:450])
         frame_counter += 1
 
     cam.release()
@@ -96,12 +100,14 @@ def recorde_hand_gesture(label_name, data_dir, img_num):
 def run_2():
     models = [cnnmodel.load_classifier(finger) for finger in range(0, 5)]
     window_name = 'test'
-
+    start_point = (150,150)
+    end_point = (450,450)
     while True:
         retval, frame = cam.read()
-        if not retval: break
-        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
+        if not retval:
+            break
+        cv2.rectangle(frame, pt1=start_point, pt2=end_point, color=(180, 180, 20), thickness=2)
+        frame_rgb = cv2.cvtColor(frame[150:450,150:450], cv2.COLOR_BGR2RGB)
         yhats = [numpy.squeeze(cnnmodel.predict_image(model, frame_rgb)) for model in models]
         cv2.imshow(window_name, frame)
 
