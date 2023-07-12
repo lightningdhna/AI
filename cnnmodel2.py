@@ -15,6 +15,8 @@ from keras.metrics import Precision, Recall, BinaryAccuracy
 import os
 import warnings
 
+import cnnmodel
+
 
 # backend = None
 # layers = None
@@ -97,7 +99,7 @@ def conv_block(input_tensor,
     return x
 
 
-def ResNet50(input_shape=(64,64,3) ):
+def ResNet50(input_shape=(64, 64, 3)):
     # Determine proper input shape
     if backend.image_data_format() == 'channels_last':
         bn_axis = 3
@@ -150,3 +152,7 @@ def create_resnet_classifier(finger, input_shape=(64, 64, 3)):
     model.save(os.path.join('models', 'resnet' + str(finger) + '.h5'))
     return model
 
+
+def continue_training_classifier(finger, train_ds, val_ds, epoch = 1):
+    model_name = 'resnet' + str(finger) + '.h5'
+    cnnmodel.continue_training_model(model_name, train_ds, val_ds, epoch)

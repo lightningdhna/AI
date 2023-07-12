@@ -76,11 +76,11 @@ def create_classifier_finger(finger, epoch, input_shape=(64, 64, 3)):
         ax[i][j].imshow(img)
         ax[i][j].title.set_text(str(labels[ix].numpy()))
     fig.tight_layout(pad=3)
-    plt.show()
+    # plt.show()
 
     for i in range(epoch):
         print(f"epoch{i}")
-        cnnmodel.continue_training_classifier(finger, train_ds, val_ds)
+        cnnmodel2.continue_training_classifier(finger, train_ds, val_ds)
 
 
 def continue_training_classifier(finger, epoch, input_shape=(64, 64, 3)):
@@ -88,7 +88,7 @@ def continue_training_classifier(finger, epoch, input_shape=(64, 64, 3)):
                                                                                                        input_shape=input_shape)
     for i in range(epoch):
         print(f"epoch{i}")
-        cnnmodel.continue_training_classifier(finger, train_ds, val_ds, epoch=1)
+        cnnmodel2.continue_training_classifier(finger, train_ds, val_ds, epoch=1)
 
 
 from keras.layers import *
