@@ -120,11 +120,13 @@ def ResNet50(input_shape=(64, 64, 3)):
     x = conv_block(x, 3, [64, 64, 256], stage=2, block='a', strides=(1, 1))
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='b')
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='c')
+    x = identity_block(x, 3, [64, 64, 256], stage=2, block='d')
 
     x = conv_block(x, 3, [128, 128, 512], stage=3, block='a')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='b')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='c')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')
+    x = identity_block(x, 3, [128, 128, 512], stage=3, block='e')
 
     # x = conv_block(x, 3, [256, 256, 1024], stage=4, block='a')
     # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='b')
@@ -142,7 +144,7 @@ def ResNet50(input_shape=(64, 64, 3)):
     x = layers.Dense(1, activation='sigmoid')(x)
 
     model = keras.Model(inputs, x)
-    model.compile(optimizer='sgd', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])
+    model.compile(optimizer='adam', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])
     model.summary()
     return model
 

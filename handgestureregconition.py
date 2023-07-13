@@ -55,7 +55,7 @@ def use_augmentation():
 
 
 def recorde_hand_gesture(label_name, data_dir, img_num):
-    frame_step = 2
+    frame_step = 3
     img_folder_path = os.path.join(data_dir, label_name)
     if not os.path.isdir(img_folder_path):
         os.mkdir(img_folder_path)
@@ -79,6 +79,9 @@ def recorde_hand_gesture(label_name, data_dir, img_num):
             break
         if key == ord('s'):
             start_recording = True
+        if key == ord('r'):
+            start_recording = False
+            cv2.setWindowTitle('window','stop')
         if not retval:
             break
         if not start_recording:

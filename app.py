@@ -63,24 +63,25 @@ def create_classifier_finger(finger, epoch, input_shape=(64, 64, 3)):
     model = cnnmodel2.create_resnet_classifier(finger,input_shape)
     train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set_finger(finger,
                                                                                                        input_shape=input_shape)
-    batch = next(iter(train_ds))
-    labels = batch[1]
-    images = batch[0]
-    n = len(images)
-    ncol = int(math.ceil(math.sqrt(n)))
-
-    fig, ax = plt.subplots(ncols=ncol, nrows=int(math.ceil(n / ncol)), figsize=(10, 10))
-    for ix, img in enumerate(images):
-        i = int(ix / ncol)
-        j = int(ix % ncol)
-        ax[i][j].imshow(img)
-        ax[i][j].title.set_text(str(labels[ix].numpy()))
-    fig.tight_layout(pad=3)
+    # batch = next(iter(train_ds))
+    # labels = batch[1]
+    # images = batch[0]
+    # n = len(images)
+    # ncol = int(math.ceil(math.sqrt(n)))
+    #
+    # fig, ax = plt.subplots(ncols=ncol, nrows=int(math.ceil(n / ncol)), figsize=(10, 10))
+    # for ix, img in enumerate(images):
+    #     i = int(ix / ncol)
+    #     j = int(ix % ncol)
+    #     ax[i][j].imshow(img)
+    #     ax[i][j].title.set_text(str(labels[ix].numpy()))
+    # fig.tight_layout(pad=3)
     # plt.show()
 
-    for i in range(epoch):
-        print(f"epoch{i}")
-        cnnmodel2.continue_training_classifier(finger, train_ds, val_ds)
+    # for i in range(epoch):
+    #     print(f"epoch{i}")
+
+    cnnmodel2.continue_training_classifier(finger, train_ds, val_ds,epoch)
 
 
 def continue_training_classifier(finger, epoch, input_shape=(64, 64, 3)):
@@ -144,11 +145,11 @@ if __name__ == "__main__":
     # threads = [None]*6
     # create_classifier_finger(0,30)
     # continue_training_classifier(0,20)
-    for i in range(0, 5):
-        create_classifier_finger(i, 20)
+    # for i in range(0, 5):
+    #     create_classifier_finger(i, 30 )
     # continue_training_classifier(0,100)
-    # create_img_data('11111', 300, data_dir='data')
-    # test('2.h5')
+    # create_img_data('10001', 100, data_dir='data')
+    test('resnet0.h5')
 
     # model = cnnmodel.load_model('2.h5')
     # cnnmodel.predict(model,os.path.join('data1/01110','100.jpeg'))

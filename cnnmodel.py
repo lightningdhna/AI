@@ -56,7 +56,7 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
 
 
 def load_classifier(finger):
-    model_name = str(finger) + '.h5'
+    model_name = 'resnet' + str(finger) + '.h5'
     print(f"loading{model_name}")
     return load_model(model_name)
 
@@ -186,11 +186,32 @@ def predict_using_trained_model(model_name, img_path):
     predict(model, img_path)
 
 
-def continue_training_model(model_name, train_data, val_data, epoch=1):
+def continue_training_model(model_name, train_data, val_data, epoch):
     print(f"training model{model_name}")
     model = load_model(model_name)
     log_dir = 'logs'
     tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir)
     history = model.fit(train_data, epochs=epoch, validation_data=val_data, callbacks=[tensorboard_callback])
+
     model.save(os.path.join('models', model_name))
     print(f"save to {os.path.join('models',model_name)}")
+
+    fig, ax  = plt.subplots(nrows=2,ncols=1,figsize= (10,6))
+
+    ax[0].plot(history.history['loss'])
+    ax[0].plot(history.history['val_loss'])
+    ax[0].title.set_text('model loss')
+    ax[0].set(xlabel = 'epoch', ylabel = 'loss')
+    # ax[0].xlabel('epoch')
+    ax[0].legend(['train', 'val'], loc='upper left')
+
+    ax[1].plot(history.history['accuracy'])
+    ax[1].plot(history.history['val_accuracy'])
+    ax[1].title.set_text('model accuracy')
+    # ax[1].ylabel('accuracy')
+    # ax[1].xlabel('epoch')
+    ax[1].set(xlabel = 'epoch', ylabel = 'accuracy')
+    ax[1].legend(['train', 'val'], loc='upper left')
+    plt.tight_layout(pad=5)
+    plt.savefig(f"training_{model_name}.jpeg")
+    # plt.show()
