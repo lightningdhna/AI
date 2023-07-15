@@ -210,7 +210,7 @@ def continue_training_model(model_name, train_data, val_data, epoch):
     ax[1].title.set_text('model accuracy')
     # ax[1].ylabel('accuracy')
     # ax[1].xlabel('epoch')
-    ax[1].set(xlabel = 'epoch', ylabel = 'accuracy')
+    ax[1].set(xlabel = 'epoch', ylabel = 'accuracy', yticks =[0,0.25,0.5,1])
     ax[1].legend(['train', 'val'], loc='upper left')
     plt.tight_layout(pad=5)
     plt.savefig(f"training_{model_name}.jpeg")
