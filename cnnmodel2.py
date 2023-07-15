@@ -109,7 +109,7 @@ def ResNet50(input_shape=(64, 64, 3)):
 
     inputs = keras.Input(shape=input_shape)
     x = layers.ZeroPadding2D(padding=(3, 3))(inputs)
-    x = layers.Conv2D(64, (7, 7),
+    x = layers.Conv2D(8, (7, 7),
                       strides=(2, 2),
                       padding='valid',
                       kernel_initializer='he_normal')(x)
@@ -118,19 +118,36 @@ def ResNet50(input_shape=(64, 64, 3)):
     x = layers.ZeroPadding2D(padding=(1, 1))(x)
     x = layers.MaxPooling2D((3, 3), strides=(2, 2))(x)
 
-    x = conv_block(x, 3, [64, 64, 256], stage=2, block='a', strides=(1, 1))
-    x = identity_block(x, 3, [64, 64, 256], stage=2, block='b')
-    x = identity_block(x, 3, [64, 64, 256], stage=2, block='c')
+    #block 1
+    x = conv_block(x, 3, [8, 8, 32], stage=2, block='a', strides=(1, 1))
+    x = identity_block(x, 3, [8, 8, 32], stage=2, block='b')
+    x = identity_block(x, 3, [8, 8, 32], stage=2, block='c')
     # x = identity_block(x, 3, [64, 64, 256], stage=2, block='d')
 
-    x = conv_block(x, 3, [128, 128, 512], stage=3, block='a')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='b')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='c')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')
+    #Block 2
+    x = conv_block(x, 3, [16, 16, 64], stage=3, block='a')
+    x = identity_block(x, 3, [16, 16, 64], stage=3, block='b')
+    x = identity_block(x, 3, [16, 16, 64], stage=3, block='c')
+    x = identity_block(x, 3, [16, 16, 64], stage=3, block='d')
     # x = identity_block(x, 3, [128, 128, 512], stage=3, block='e')
 
+    #Block 3
+    x = conv_block(x, 3, [32, 32 ,128], stage=4, block='a')
+    x = identity_block(x, 3, [32, 32, 128], stage=4, block='b')
+    x = identity_block(x, 3, [32, 32, 128], stage=4, block='c')
+    x = identity_block(x, 3, [32, 32, 128], stage=4, block='d')
+    x = identity_block(x, 3, [32, 32, 128], stage=4, block='e')
+    x = identity_block(x, 3, [32, 32, 128], stage=4, block='f')
+
+    #Block 4
+    x = conv_block(x, 3, [64, 64, 256], stage=5, block='a')
+    x = identity_block(x, 3, [64, 64, 256], stage=5, block='b')
+    x = identity_block(x, 3, [64, 64, 256], stage=5, block='c')
+    # x = identity_block(x, 3, [64, 64, 256], stage=5, block='e')
+
+
     x = GlobalAveragePooling2D()(x)
-    x = Dense(512,activation=tf.nn.relu)(x)
+    x = Dense(256,activation=tf.nn.relu)(x)
     # x = layers.Flatten()(x)
     x = Dense(1, activation='sigmoid')(x)
 

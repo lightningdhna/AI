@@ -4,7 +4,7 @@ from keras.losses import Loss
 from matplotlib import pyplot as plt
 from cv2 import cv2
 import numpy as np
-from keras import Sequential
+from keras import Sequential, layers
 from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense
 import tensorflow as tf
 import keras
@@ -18,36 +18,60 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
     model = Sequential()
 
     # block 1
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
 
-    model.add(Conv2D(64,(2,2),strides=(2,2),padding='same', activation=tf.nn.relu))
+    model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
+
+    model.add(layers.AveragePooling2D())
+    # model.add(Conv2D(16,(7,7),strides=(2,2),padding='same', activation=tf.nn.relu))
     # model.add(MaxPooling2D())
 
     # block 2
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+
+    model.add(layers.AveragePooling2D())
+
     # model.add(Conv2D(64,(2,2),strides=(2,2),padding='same'))
-    model.add(Conv2D(64,(6,6),strides=(2,2),padding='same', activation=tf.nn.selu))
+    # model.add(Conv2D(32,(5,5),strides=(2,2),padding='same', activation=tf.nn.relu))
     # model.add(MaxPooling2D())
 
     # block 3
-    # model.add(Conv2D(128, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    # model.add(Conv2D(128, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    # model.add(Conv2D(128, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    # model.add(Conv2D(128, (3, 3), activation=tf.nn.relu, padding='same'))
-    # # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    # model.add(Conv2D(128,(2,2),strides=(2,2),padding='same'))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+
+    model.add(layers.AveragePooling2D())
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64,(3,3),strides=(2,2),padding='same', activation='relu'))
+
+    # block 4và t
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+
+    model.add(layers.AveragePooling2D())
+
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64,(3,3),strides=(2,2),padding='same', activation='relu'))
 
     # FCL
     model.add(Flatten())
 
-    model.add(Dense(128, activation=tf.nn.tanh))
-    model.add(Dense(128, activation=tf.nn.tanh))
+    model.add(Dense(64, activation=tf.nn.tanh))
+    model.add(Dense(64, activation=tf.nn.tanh))
     model.add(Dense(1, activation=tf.nn.sigmoid))
 
-    model.compile(optimizer='sgd', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])
+    model.compile(optimizer='adam', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])
 
     model.summary()
     model.save(os.path.join('models', str(finger) + '.h5'))
@@ -210,7 +234,7 @@ def continue_training_model(model_name, train_data, val_data, epoch):
     ax[1].title.set_text('model accuracy')
     # ax[1].ylabel('accuracy')
     # ax[1].xlabel('epoch')
-    ax[1].set(xlabel = 'epoch', ylabel = 'accuracy', yticks =[0,0.25,0.5,1])
+    ax[1].set(xlabel = 'epoch', ylabel = 'accuracy', yticks =[0,0.25,0.5,0.75,1])
     ax[1].legend(['train', 'val'], loc='upper left')
     plt.tight_layout(pad=5)
     plt.savefig(f"training_{model_name}.jpeg")

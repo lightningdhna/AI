@@ -150,7 +150,7 @@ if __name__ == "__main__":
     # for i in range(0,5):
     #     check_data(i)
     for i in range(0, 5):
-        create_classifier_finger(i, 20 )
+        create_classifier_finger(i, 30 )
     # continue_training_classifier(0,100)
     # create_img_data('11111', 100, data_dir='seen_test')
     # test('resnet0.h5')
