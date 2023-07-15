@@ -10,6 +10,7 @@ import numpy as np
 import cnnmodel
 import cnnmodel2
 import handgestureregconition
+import inception_model
 import loaddata.datapreprocessor
 from matplotlib import pyplot as plt
 
@@ -60,7 +61,8 @@ def continue_training(epoch=20, input_shape=(64, 64, 3)):
 
 def create_classifier_finger(finger, epoch, input_shape=(64, 64, 3)):
     # model = cnnmodel.create_classifier(finger)
-    model = cnnmodel2.create_resnet_classifier(finger,input_shape)
+    # model = cnnmodel2.create_resnet_classifier(finger,input_shape)
+    model = inception_model.create_inception_classifier(finger, input_shape)
     train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set_finger(finger,
                                                                                                        input_shape=input_shape)
     # batch = next(iter(train_ds))
