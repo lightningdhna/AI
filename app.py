@@ -98,16 +98,17 @@ import tensorflow as tf
 
 def test_model():
     acc = []
+    test_data_dir ='test'
     for finger in range(0, 5):
         img_count = 0
         right_ans = 0;
         model = cnnmodel.load_classifier(finger)
-        for label in os.listdir('test'):
+        for label in os.listdir(test_data_dir):
             s = label.split(sep=' ')
             y = float(label[finger])
-            for img in os.listdir(os.path.join('test', label)):
+            for img in os.listdir(os.path.join(test_data_dir, label)):
                 img_count += 1
-                yhat = cnnmodel.predict_image(model, cv2.cvtColor(cv2.imread(os.path.join('test',label,img)),cv2.COLOR_BGR2RGB))
+                yhat = cnnmodel.predict_image(model, cv2.cvtColor(cv2.imread(os.path.join(test_data_dir,label,img)),cv2.COLOR_BGR2RGB))
                 if (yhat - 0.5) * (y - 0.5) > 0:
                     right_ans += 1
 
@@ -142,14 +143,17 @@ def test_model2():
 
 
 if __name__ == "__main__":
+    # create_classifier_finger(0,10)
     # threads = [None]*6
     # create_classifier_finger(0,30)
     # continue_training_classifier(0,20)
-    # for i in range(0, 5):
-    #     create_classifier_finger(i, 30 )
+    # for i in range(0,5):
+    #     check_data(i)
+    for i in range(0, 5):
+        create_classifier_finger(i, 20 )
     # continue_training_classifier(0,100)
-    # create_img_data('10001', 100, data_dir='data')
-    test('resnet0.h5')
+    # create_img_data('11111', 100, data_dir='seen_test')
+    # test('resnet0.h5')
 
     # model = cnnmodel.load_model('2.h5')
     # cnnmodel.predict(model,os.path.join('data1/01110','100.jpeg'))

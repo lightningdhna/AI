@@ -8,7 +8,8 @@ from matplotlib import pyplot as plt
 from cv2 import cv2
 import numpy as np
 from keras import Sequential, layers, backend
-from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, BatchNormalization, Activation, ZeroPadding2D
+from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, BatchNormalization, Activation, ZeroPadding2D, \
+    GlobalAveragePooling2D
 import tensorflow as tf
 import keras
 from keras.metrics import Precision, Recall, BinaryAccuracy
@@ -120,31 +121,21 @@ def ResNet50(input_shape=(64, 64, 3)):
     x = conv_block(x, 3, [64, 64, 256], stage=2, block='a', strides=(1, 1))
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='b')
     x = identity_block(x, 3, [64, 64, 256], stage=2, block='c')
-    x = identity_block(x, 3, [64, 64, 256], stage=2, block='d')
+    # x = identity_block(x, 3, [64, 64, 256], stage=2, block='d')
 
     x = conv_block(x, 3, [128, 128, 512], stage=3, block='a')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='b')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='c')
     x = identity_block(x, 3, [128, 128, 512], stage=3, block='d')
-    x = identity_block(x, 3, [128, 128, 512], stage=3, block='e')
+    # x = identity_block(x, 3, [128, 128, 512], stage=3, block='e')
 
-    # x = conv_block(x, 3, [256, 256, 1024], stage=4, block='a')
-    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='b')
-    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='c')
-    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='d')
-    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='e')
-    # x = identity_block(x, 3, [256, 256, 1024], stage=4, block='f')
-
-    # x = conv_block(x, 3, [512, 512, 2048], stage=5, block='a')
-    # x = identity_block(x, 3, [512, 512, 2048], stage=5, block='b')
-    # x = identity_block(x, 3, [512, 512, 2048], stage=5, block='c')
-
-    x = layers.GlobalAveragePooling2D()(x)
+    x = GlobalAveragePooling2D()(x)
+    x = Dense(512,activation=tf.nn.relu)(x)
     # x = layers.Flatten()(x)
-    x = layers.Dense(1, activation='sigmoid')(x)
+    x = Dense(1, activation='sigmoid')(x)
 
     model = keras.Model(inputs, x)
-    model.compile(optimizer='adam', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])
+    model.compile(optimizer='adam', loss=tf.losses.BinaryCrossentropy(), metrics=['accuracy'])
     model.summary()
     return model
 
@@ -155,6 +146,6 @@ def create_resnet_classifier(finger, input_shape=(64, 64, 3)):
     return model
 
 
-def continue_training_classifier(finger, train_ds, val_ds, epoch = 1):
+def continue_training_classifier(finger, train_ds, val_ds, epoch=1):
     model_name = 'resnet' + str(finger) + '.h5'
     cnnmodel.continue_training_model(model_name, train_ds, val_ds, epoch)
