@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 from cv2 import cv2
 from keras import Sequential, layers
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, AveragePooling2D
 from keras.metrics import Precision, Recall, BinaryAccuracy
 from matplotlib import pyplot as plt
 
@@ -16,67 +16,57 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
     model = Sequential()
 
     # block 1
-    model.add(Conv2D(4, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-
-    model.add(Conv2D(4, (3, 3), activation=tf.nn.relu, padding='same'))
-    # model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
-    # model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
-
-    model.add(layers.AveragePooling2D())
-    # model.add(Conv2D(16,(7,7),strides=(2,2),padding='same', activation=tf.nn.relu))
-    # model.add(MaxPooling2D())
-
-    # block 2
-    model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(8, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
+    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
     # model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
 
-    model.add(layers.AveragePooling2D())
+    model.add(Conv2D(16,(2,2),strides=(2,2),activation=tf.nn.relu))
+
+    # block 2
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+
+    model.add(Conv2D(32,(2,2),strides=(2,2),activation=tf.nn.relu))
+
+    # model.add(AveragePooling2D())
 
     # model.add(Conv2D(64,(2,2),strides=(2,2),padding='same'))
     # model.add(Conv2D(32,(5,5),strides=(2,2),padding='same', activation=tf.nn.relu))
     # model.add(MaxPooling2D())
 
     # block 3
-    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
 
-    model.add(layers.AveragePooling2D())
+    model.add(Conv2D(64,(3,3),strides=(3,3),activation=tf.nn.relu))
+
     # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
     # model.add(Conv2D(64,(3,3),strides=(2,2),padding='same', activation='relu'))
 
     # block 4
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-
-    # block 5
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-
-    model.add(layers.AveragePooling2D())
-
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    #
+    # model.add(MaxPooling2D())
     # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
     # model.add(Conv2D(64,(3,3),strides=(2,2),padding='same', activation='relu'))
 
     # FCL
     model.add(Flatten())
 
-    model.add(Dense(64, activation=tf.nn.tanh))
-    model.add(Dense(64, activation=tf.nn.tanh))
+    model.add(Dense(64, activation=tf.nn.relu))
+    model.add(Dense(64, activation=tf.nn.relu))
     model.add(Dense(1, activation=tf.nn.sigmoid))
 
-    model.compile(optimizer='adam', loss=tf.losses.BinaryCrossentropy(), metrics=['accuracy'])
+    model.compile(optimizer='adam', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])
 
     model.summary()
     model.save(os.path.join('models', str(finger) + '.h5'))
@@ -90,9 +80,9 @@ def load_classifier(finger, model_type = 'resnet'):
     return load_model(model_name)
 
 
-def continue_training_classifier(finger, train_data, val_data, epoch=1):
+def continue_training_classifier(finger, train_data, val_data, epoch):
     model_name = str(finger) + '.h5'
-    return continue_training_model(model_name, train_data, val_data)
+    return continue_training_model(model_name, train_data, val_data, epoch)
 
 
 def create_model(model_name, input_shape=(64, 64, 3)):

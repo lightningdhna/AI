@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 import cnnmodel
-import cnnmodel2
+import resnet_model
 import handgestureregconition
 import loaddata.datapreprocessor
 
@@ -55,7 +55,7 @@ def continue_training(epoch=20, input_shape=(64, 64, 3)):
 
 def create_classifier_finger(finger, epoch, input_shape=(64, 64, 3)):
     model = cnnmodel.create_classifier(finger)
-    # model = cnnmodel2.create_resnet_classifier(finger, input_shape)
+    # model = resnet_model.create_resnet_classifier(finger, input_shape)
     # model = inception_model.create_inception_classifier(finger, input_shape)
     train_ds, val_ds = loaddata.datapreprocessor.load_data_from_folder('data').create_data_set_finger(finger,
                                                                                                       input_shape=input_shape)
@@ -78,7 +78,7 @@ def create_classifier_finger(finger, epoch, input_shape=(64, 64, 3)):
     #     print(f"epoch{i}")
 
     cnnmodel.continue_training_classifier(finger, train_ds, val_ds, epoch)
-    # cnnmodel2.continue_training_classifier(finger, train_ds, val_ds, epoch)
+    # resnet_model.continue_training_classifier(finger, train_ds, val_ds, epoch)
     # inception_model.continue_training_classifier(finger,train_ds, val_ds, epoch)
 
 
@@ -87,12 +87,11 @@ def continue_training_classifier(finger, epoch, input_shape=(64, 64, 3)):
                                                                                                       input_shape=input_shape)
     for i in range(epoch):
         print(f"epoch{i}")
-        cnnmodel2.continue_training_classifier(finger, train_ds, val_ds, epoch=1)
+        resnet_model.continue_training_classifier(finger, train_ds, val_ds, epoch=1)
 
 
-def test_model():
+def test_model(test_data_dir = 'test'):
     acc = []
-    test_data_dir = 'seen_test'
     for finger in range(0, 5):
         img_count = 0
         right_ans = 0
@@ -145,7 +144,7 @@ if __name__ == "__main__":
     # create_classifier_finger(0,30)
     # continue_training_classifier(0,20)
     # for i in range(0,5):
-    #     check_data(i)
+    check_data(0)
     for i in range(0, 5):
         create_classifier_finger(i, 20)
     # continue_training_classifier(0,100)
@@ -157,6 +156,10 @@ if __name__ == "__main__":
 
     # check_data(2)
     # test_model2()
-    # test_model()
+    print('test seen data')
+    test_model()
+    print('test unseen data: ')
+    test_model('seen_test')
+
     # run_model()
     pass

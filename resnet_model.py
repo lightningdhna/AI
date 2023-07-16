@@ -157,3 +157,4 @@ def create_resnet_classifier(finger, input_shape=(64, 64, 3)):
 def continue_training_classifier(finger, train_ds, val_ds, epoch=1,type ='resnet'):
     model_name = type + str(finger) + '.h5'
     cnnmodel.continue_training_model(model_name, train_ds, val_ds, epoch)
+

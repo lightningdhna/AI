@@ -101,7 +101,7 @@ def recorde_hand_gesture(label_name, data_dir, img_num):
 
 
 def run_2():
-    models = [cnnmodel.load_classifier(finger) for finger in range(0, 5)]
+    models = [cnnmodel.load_classifier(finger,model_type='resnet') for finger in range(0, 5)]
     window_name = 'test'
     start_point = (150,150)
     end_point = (450,450)
