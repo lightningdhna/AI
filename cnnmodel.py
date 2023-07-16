@@ -1,18 +1,16 @@
 import os
 
-from keras.losses import Loss
-from matplotlib import pyplot as plt
-from cv2 import cv2
-import numpy as np
-from keras import Sequential, layers
-from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense
-import tensorflow as tf
 import keras
+import numpy as np
+import tensorflow as tf
+from cv2 import cv2
+from keras import Sequential, layers
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from keras.metrics import Precision, Recall, BinaryAccuracy
-
-from loaddata import labelfeaturemapping
+from matplotlib import pyplot as plt
 
 output_dim_num = 5
+
 
 def create_classifier(finger, input_shape=(64, 64, 3)):
     model = Sequential()
@@ -86,8 +84,8 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
     return model
 
 
-def load_classifier(finger):
-    model_name = 'resnet' + str(finger) + '.h5'
+def load_classifier(finger, model_type = 'resnet'):
+    model_name = model_type + str(finger) + '.h5'
     print(f"loading{model_name}")
     return load_model(model_name)
 
@@ -225,14 +223,14 @@ def continue_training_model(model_name, train_data, val_data, epoch):
     history = model.fit(train_data, epochs=epoch, validation_data=val_data, callbacks=[tensorboard_callback])
 
     model.save(os.path.join('models', model_name))
-    print(f"save to {os.path.join('models',model_name)}")
+    print(f"save to {os.path.join('models', model_name)}")
 
-    fig, ax  = plt.subplots(nrows=2,ncols=1,figsize= (10,6))
+    fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
 
     ax[0].plot(history.history['loss'])
     ax[0].plot(history.history['val_loss'])
     ax[0].title.set_text('model loss')
-    ax[0].set(xlabel = 'epoch', ylabel = 'loss')
+    ax[0].set(xlabel='epoch', ylabel='loss')
     # ax[0].xlabel('epoch')
     ax[0].legend(['train', 'val'], loc='upper left')
 
@@ -241,7 +239,7 @@ def continue_training_model(model_name, train_data, val_data, epoch):
     ax[1].title.set_text('model accuracy')
     # ax[1].ylabel('accuracy')
     # ax[1].xlabel('epoch')
-    ax[1].set(xlabel = 'epoch', ylabel = 'accuracy', yticks =[0,0.25,0.5,0.75,1])
+    ax[1].set(xlabel='epoch', ylabel='accuracy', yticks=[0, 0.25, 0.5, 0.75, 1])
     ax[1].legend(['train', 'val'], loc='upper left')
     plt.tight_layout(pad=5)
     plt.savefig(f"training_{model_name}.jpeg")

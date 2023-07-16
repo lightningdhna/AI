@@ -1,20 +1,11 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+
+
 import os
 
-from keras.losses import Loss
-from matplotlib import pyplot as plt
-from cv2 import cv2
-import numpy as np
-from keras import Sequential, layers, backend
-from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense, BatchNormalization, Activation, ZeroPadding2D, \
-    GlobalAveragePooling2D
-import tensorflow as tf
 import keras
-from keras.metrics import Precision, Recall, BinaryAccuracy
-import os
-import warnings
+import tensorflow as tf
+from keras import layers, backend
+from keras.layers import Dense, GlobalAveragePooling2D
 
 import cnnmodel
 
@@ -163,6 +154,6 @@ def create_resnet_classifier(finger, input_shape=(64, 64, 3)):
     return model
 
 
-def continue_training_classifier(finger, train_ds, val_ds, epoch=1):
-    model_name = 'resnet' + str(finger) + '.h5'
+def continue_training_classifier(finger, train_ds, val_ds, epoch=1,type ='resnet'):
+    model_name = type + str(finger) + '.h5'
     cnnmodel.continue_training_model(model_name, train_ds, val_ds, epoch)
