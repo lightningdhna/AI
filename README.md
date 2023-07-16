@@ -30,18 +30,23 @@
 - # Kết quả training
   - ## Mô hình áp dụng Resnet50 :
     - ### Training classifier 0:
-     - ![training_resnet0 h5](https://github.com/lightningdhna/AI/assets/77286833/d8112f4c-2635-4846-88b8-f4e1e1641d25)
+      - ![training_resnet0 h5](https://github.com/lightningdhna/AI/assets/77286833/d8112f4c-2635-4846-88b8-f4e1e1641d25)
     - ### Training classifier 1:
-      -![training_resnet1 h5](https://github.com/lightningdhna/AI/assets/77286833/37738d5a-12ac-4213-9527-c47f5d6d7bda)
-
-  - // ảnh
+      - ![training_resnet1 h5](https://github.com/lightningdhna/AI/assets/77286833/37738d5a-12ac-4213-9527-c47f5d6d7bda)
+    - ### Training classifier 2:
+      - ![training_resnet2 h5](https://github.com/lightningdhna/AI/assets/77286833/6d917bd1-6d33-4eae-910f-e098be68b753)
+    - ### Training classifier 3:
+      - ![training_resnet3 h5](https://github.com/lightningdhna/AI/assets/77286833/c0388b73-5939-4786-8d89-b848168ca1f1)
+    - ### Training classifier 4:
+      - ![training_resnet4 h5](https://github.com/lightningdhna/AI/assets/77286833/40a0924d-48b4-4605-91f7-29174da238d3)
   - ## Mô hình áp dụng VGG16:
 
 # Kết quả test
  - ## Model áp dụng Resnet50:
+   - ![image](https://github.com/lightningdhna/AI/assets/77286833/1b2192e4-38e4-470d-8476-c76c2a65673e)
  - ## Model áp dụng Vgg16:
 
 # Kết quả model sau khi train được lưu trong thư mục 'models'
-> **_ Model Classifier cho ngón tay i sẽ kết thúc dạng 'i.h5', i = 0 tương ứng với ngón tay cái, i = 4 tương ứng với ngón út _**
+> ** Model Classifier cho ngón tay i sẽ kết thúc dạng 'i.h5', i = 0 tương ứng với ngón tay cái, i = 4 tương ứng với ngón út **
 
 
