@@ -45,6 +45,6 @@
    - ![image](https://github.com/lightningdhna/AI/assets/77286833/1b2192e4-38e4-470d-8476-c76c2a65673e)
 
 # Kết quả model sau khi train được lưu trong thư mục 'models'
-> ** Model Classifier cho ngón tay i sẽ kết thúc dạng 'i.h5', i = 0 tương ứng với ngón tay cái, i = 4 tương ứng với ngón út **
+> **_Model Classifier cho ngón tay i sẽ kết thúc dạng 'i.h5', i = 0 tương ứng với ngón tay cái, i = 4 tương ứng với ngón út_**
 
 
