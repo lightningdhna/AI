@@ -15,21 +15,21 @@ output_dim_num = 5
 def create_classifier(finger, input_shape=(64, 64, 3)):
     model = Sequential()
 
-    # block 1
-    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    # # block 1
+    # model.add(Conv2D(16, (5, 5), activation=tf.nn.relu, padding='same', input_shape=input_shape))
     # model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
-
-    model.add(Conv2D(16,(2,2),strides=(2,2),activation=tf.nn.relu))
+    # model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    # # model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    #
+    # model.add(Conv2D(16,(6,6),strides=(2,2),activation=tf.nn.relu))
 
     # block 2
+    model.add(Conv2D(32, (5, 5), activation=tf.nn.relu, padding='same',input_shape=input_shape))
     model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
 
-    model.add(Conv2D(32,(2,2),strides=(2,2),activation=tf.nn.relu))
+    model.add(Conv2D(32,(6,6),strides=(3,3),activation=tf.nn.relu))
 
     # model.add(AveragePooling2D())
 
@@ -38,12 +38,14 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
     # model.add(MaxPooling2D())
 
     # block 3
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (5, 5), activation=tf.nn.relu, padding='same'))
     model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
     model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
     # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
 
-    model.add(Conv2D(64,(3,3),strides=(3,3),activation=tf.nn.relu))
+    model.add(Conv2D(64,(6,6),strides=(3,3),activation=tf.nn.relu))
 
     # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
     # model.add(Conv2D(64,(3,3),strides=(2,2),padding='same', activation='relu'))
@@ -62,8 +64,8 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
     # FCL
     model.add(Flatten())
 
-    model.add(Dense(64, activation=tf.nn.relu))
-    model.add(Dense(64, activation=tf.nn.relu))
+    model.add(Dense(128, activation=tf.nn.tanh))
+    model.add(Dense(128, activation=tf.nn.tanh))
     model.add(Dense(1, activation=tf.nn.sigmoid))
 
     model.compile(optimizer='adam', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])

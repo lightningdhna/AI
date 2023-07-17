@@ -144,9 +144,9 @@ if __name__ == "__main__":
     # create_classifier_finger(0,30)
     # continue_training_classifier(0,20)
     # for i in range(0,5):
-    check_data(0)
-    for i in range(0, 5):
-        create_classifier_finger(i, 20)
+    # check_data(0)
+    # for i in range(0, 5):
+    #     create_classifier_finger(i, 20)
     # continue_training_classifier(0,100)
     # create_img_data('11111', 100, data_dir='seen_test')
     # test('resnet0.h5')
@@ -156,10 +156,10 @@ if __name__ == "__main__":
 
     # check_data(2)
     # test_model2()
-    print('test seen data')
-    test_model()
-    print('test unseen data: ')
-    test_model('seen_test')
+    # print('test seen data')
+    # test_model()
+    # print('test unseen data: ')
+    # test_model('seen_test')
 
-    # run_model()
+    run_model()
     pass
