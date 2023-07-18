@@ -46,7 +46,7 @@ class DataLoader:
                     print('Issue with Image: {}'.format(image_path))
                     print(e)
 
-    def create_data_set(self, input_shape=(64, 64, 3), apply_augmentation=False, aug_rate=1):
+    def create_data_set(self, input_shape, apply_augmentation=False, aug_rate=1):
         val_rate = 0.2
         # img_height = input_shape[0]
         # img_width = input_shape[1]
@@ -115,7 +115,7 @@ class DataLoader:
         #     print(label[0])
 
         return train_ds, val_ds
-    def create_data_set_finger(self,finger, input_shape=(64, 64, 3), apply_augmentation=False, aug_rate=1):
+    def create_data_set_finger(self,finger, input_shape, apply_augmentation=False, aug_rate=1):
         val_rate = 0.1
         # img_height = input_shape[0]
         # img_width = input_shape[1]

@@ -1,44 +1,65 @@
 import os
 
-from keras.losses import Loss
-from matplotlib import pyplot as plt
-from cv2 import cv2
-import numpy as np
-from keras import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Dropout, Flatten, Dense
-import tensorflow as tf
 import keras
+import numpy as np
+import tensorflow as tf
+from cv2 import cv2
+from keras import Sequential, layers
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, AveragePooling2D
 from keras.metrics import Precision, Recall, BinaryAccuracy
-
-from loaddata import labelfeaturemapping
+from matplotlib import pyplot as plt
 
 output_dim_num = 5
+
 
 def create_classifier(finger, input_shape=(64, 64, 3)):
     model = Sequential()
 
-    # block 1
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
-
-    model.add(Conv2D(64,(2,2),strides=(2,2),padding='same', activation=tf.nn.relu))
-    # model.add(MaxPooling2D())
+    # # block 1
+    # model.add(Conv2D(16, (5, 5), activation=tf.nn.relu, padding='same', input_shape=input_shape))
+    # model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    # # model.add(Conv2D(16, (3, 3), activation=tf.nn.relu, padding='same'))
+    #
+    # model.add(Conv2D(16,(6,6),strides=(2,2),activation=tf.nn.relu))
 
     # block 2
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(32, (5, 5), activation=tf.nn.relu, padding='same',input_shape=input_shape))
+    model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(32, (3, 3), activation=tf.nn.relu, padding='same'))
+
+    model.add(Conv2D(32,(6,6),strides=(3,3),activation=tf.nn.relu))
+
+    # model.add(AveragePooling2D())
+
     # model.add(Conv2D(64,(2,2),strides=(2,2),padding='same'))
-    model.add(Conv2D(64,(6,6),strides=(2,2),padding='same', activation=tf.nn.selu))
+    # model.add(Conv2D(32,(5,5),strides=(2,2),padding='same', activation=tf.nn.relu))
     # model.add(MaxPooling2D())
 
     # block 3
-    # model.add(Conv2D(128, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    # model.add(Conv2D(128, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    # model.add(Conv2D(128, (3, 3), activation=tf.nn.relu, padding='same', input_shape=input_shape))
-    # model.add(Conv2D(128, (3, 3), activation=tf.nn.relu, padding='same'))
-    # # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
-    # model.add(Conv2D(128,(2,2),strides=(2,2),padding='same'))
+    model.add(Conv2D(64, (5, 5), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+
+    model.add(Conv2D(64,(6,6),strides=(3,3),activation=tf.nn.relu))
+
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64,(3,3),strides=(2,2),padding='same', activation='relu'))
+
+    # block 4
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    #
+    # model.add(MaxPooling2D())
+    # model.add(Conv2D(64, (3, 3), activation=tf.nn.relu, padding='same'))
+    # model.add(Conv2D(64,(3,3),strides=(2,2),padding='same', activation='relu'))
 
     # FCL
     model.add(Flatten())
@@ -47,7 +68,7 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
     model.add(Dense(128, activation=tf.nn.tanh))
     model.add(Dense(1, activation=tf.nn.sigmoid))
 
-    model.compile(optimizer='sgd', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])
+    model.compile(optimizer='adam', loss=tf.losses.MeanSquaredError(), metrics=['accuracy'])
 
     model.summary()
     model.save(os.path.join('models', str(finger) + '.h5'))
@@ -55,15 +76,15 @@ def create_classifier(finger, input_shape=(64, 64, 3)):
     return model
 
 
-def load_classifier(finger):
-    model_name = 'resnet' + str(finger) + '.h5'
+def load_classifier(finger, model_type = 'resnet'):
+    model_name = model_type + str(finger) + '.h5'
     print(f"loading{model_name}")
     return load_model(model_name)
 
 
-def continue_training_classifier(finger, train_data, val_data, epoch=1):
+def continue_training_classifier(finger, train_data, val_data, epoch):
     model_name = str(finger) + '.h5'
-    return continue_training_model(model_name, train_data, val_data)
+    return continue_training_model(model_name, train_data, val_data, epoch)
 
 
 def create_model(model_name, input_shape=(64, 64, 3)):
@@ -164,7 +185,7 @@ def test(test_data):
         # print(f'Binary Accuracy: {binary_accuracy.result().nunpy()}')
 
 
-def predict_image(model, image, input_shape=(64, 64, 3)):
+def predict_image(model, image, input_shape):
     resize = tf.image.resize(image, (input_shape[0], input_shape[1]))
     return model.predict(np.expand_dims(resize / 255.0, 0))
 
@@ -194,14 +215,14 @@ def continue_training_model(model_name, train_data, val_data, epoch):
     history = model.fit(train_data, epochs=epoch, validation_data=val_data, callbacks=[tensorboard_callback])
 
     model.save(os.path.join('models', model_name))
-    print(f"save to {os.path.join('models',model_name)}")
+    print(f"save to {os.path.join('models', model_name)}")
 
-    fig, ax  = plt.subplots(nrows=2,ncols=1,figsize= (10,6))
+    fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
 
     ax[0].plot(history.history['loss'])
     ax[0].plot(history.history['val_loss'])
     ax[0].title.set_text('model loss')
-    ax[0].set(xlabel = 'epoch', ylabel = 'loss')
+    ax[0].set(xlabel='epoch', ylabel='loss')
     # ax[0].xlabel('epoch')
     ax[0].legend(['train', 'val'], loc='upper left')
 
@@ -210,7 +231,7 @@ def continue_training_model(model_name, train_data, val_data, epoch):
     ax[1].title.set_text('model accuracy')
     # ax[1].ylabel('accuracy')
     # ax[1].xlabel('epoch')
-    ax[1].set(xlabel = 'epoch', ylabel = 'accuracy', yticks =[0,0.25,0.5,1])
+    ax[1].set(xlabel='epoch', ylabel='accuracy', yticks=[0, 0.25, 0.5, 0.75, 1])
     ax[1].legend(['train', 'val'], loc='upper left')
     plt.tight_layout(pad=5)
     plt.savefig(f"training_{model_name}.jpeg")

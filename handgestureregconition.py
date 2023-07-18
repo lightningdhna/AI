@@ -29,7 +29,7 @@ def set_prediction(window_name, yhat):
 from matplotlib import pyplot as plt
 
 
-def run(model_name):
+def run(model_name,input_shape):
     model = cnnmodel.load_model(model_name)
     start_point = (150,150)
     end_point = (450,450)
@@ -38,7 +38,7 @@ def run(model_name):
         if not retval: break
         cv2.rectangle(frame, pt1=start_point, pt2=end_point, color=(180, 180, 20), thickness=2)
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)[150:450,150:450]
-        yhat = cnnmodel.predict_image(model, frame_rgb)
+        yhat = cnnmodel.predict_image(model, frame_rgb,input_shape=input_shape)
 
         window_name = 'test'
         cv2.imshow(window_name, frame)
@@ -55,7 +55,7 @@ def use_augmentation():
 
 
 def recorde_hand_gesture(label_name, data_dir, img_num):
-    frame_step = 3
+    frame_step = 10
     img_folder_path = os.path.join(data_dir, label_name)
     if not os.path.isdir(img_folder_path):
         os.mkdir(img_folder_path)
@@ -101,7 +101,7 @@ def recorde_hand_gesture(label_name, data_dir, img_num):
 
 
 def run_2():
-    models = [cnnmodel.load_classifier(finger) for finger in range(0, 5)]
+    models = [cnnmodel.load_classifier(finger,model_type='resnet') for finger in range(0, 5)]
     window_name = 'test'
     start_point = (150,150)
     end_point = (450,450)
