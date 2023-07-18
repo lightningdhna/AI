@@ -1,7 +1,7 @@
 import os
 
 label = os.listdir('data')
-
+# label = None
 
 def get_att_by_num(num):
     s = label[int(num)]
